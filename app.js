@@ -1,4 +1,25 @@
 var express = require('express');
+
+let swaggerDefinition = {
+  info: {
+    title: 'UserMs',
+    version: '1.0.0',
+    description: 'USER REST OPERATION',
+  },
+  host: 'https://apibm.herokuapp.com',
+  basePath: '/',
+};
+
+// options for the swagger docs
+let options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./routes/*.js'],
+};
+// initialize swagger-jsdoc
+let swaggerJSDoc = require('swagger-jsdoc');
+var swaggerSpec = swaggerJSDoc(options);
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -24,6 +45,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

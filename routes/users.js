@@ -7,7 +7,40 @@ const MONGO_SCHEMA = require('../config').MONGO_SCHEMA
 mongoose.connect(MONGO_URI);
 const User = mongoose.model('User', MONGO_SCHEMA);
 
-/* GET users. */
+/**
+ * @swagger
+ * definitions:
+ *   User:
+ *     properties:
+ *       name:
+ *         type: string
+ *       firstname:
+ *         type: string
+ *       age:
+ *         type: string
+ *       sex:
+ *         type: string
+ *       adress: 
+ *         type: string
+ *       password: 
+ *         type : string
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     tags:
+ *       - Users
+ *     description: Returns all users
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: An array of users
+ *         schema:
+ *           $ref: '#/definitions/User'
+ */
 router.get('/', (req, res, next) => {
   User.find((err, user) => {
     if (err) return console.log(err)
@@ -15,7 +48,29 @@ router.get('/', (req, res, next) => {
   })
 });
 
-/* POST user. */
+
+
+
+/**
+ * @swagger
+ * /users/new:
+ *   post:
+ *     tags:
+ *       - Users
+ *     description: Creates a new user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         description: User object
+ *         in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *     responses:
+ *       200:
+ *         description: Successfully created
+ */
 router.post('/new', (req, res, next) => {
   const user = new User(req.body)
   user.save((err, user) => {
@@ -25,7 +80,23 @@ router.post('/new', (req, res, next) => {
 });
 
 /**
- * DELETE user.
+ * @swagger
+ * /users/delete:
+ *   post:
+ *     tags:
+ *       - Users
+ *     description: Deletes a single user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: user mongoDb id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted
  */
 router.post('/delete', (req, res, next) => {
   User.findByIdAndRemove(req.body._id, (err, user) => {
@@ -33,8 +104,28 @@ router.post('/delete', (req, res, next) => {
     res.sendStatus(200)
   })
 });
+
+
 /**
- * GET one user
+ * @swagger
+ * /users/find:
+ *   post:
+ *     tags:
+ *       - Users
+ *     description: Returns a single user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: user mongoDb id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: A single user
+ *         schema:
+ *           $ref: '#/definitions/User'
  */
 router.post('/find', (req, res, next) => {
   User.findById(req.body._id, (err, user) => {
@@ -42,6 +133,8 @@ router.post('/find', (req, res, next) => {
     res.send(user)
   })
 });
+
+
 
 router.post('/update', (req, res, next) => {
   User.findById(req.body._id, (err, user) => {
